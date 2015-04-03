@@ -1,10 +1,13 @@
-# Airbnb JavaScript Style Guide() {
+# JavaScript Style Guide() {
 
 *A mostly reasonable approach to JavaScript*
 
 
 ## <a name='TOC'>Table of Contents</a>
 
+  1. [Tabs vs Spaces](#tabs)
+  1. [General Code Layout](#code-layout)
+  1. [`if else` blocks](#if-else-blocks)
   1. [Types](#types)
   1. [Objects](#objects)
   1. [Arrays](#arrays)
@@ -34,6 +37,115 @@
   1. [The JavaScript Style Guide Guide](#guide-guide)
   1. [Contributors](#contributors)
   1. [License](#license)
+
+## <a name='tabs'>Tabs vs Spaces</a>
+
+  - **Set the editor to use tabs instead of spaces.** Not everyone likes their indentation the same width. Some people like it at 2 spaces, some like it at 4, others like it at you get the point. Using tabs allows for uniform code formatting while allowing the person editing the code to set the width to whatever they prefer instead of what the author of the code prefers. Everyone is happy this way!
+
+    **[[Back to top]](#TOC)**
+
+## <a name='code-layout'>General Code Layout</a>
+
+  - Use newlines to group logically related pieces of code. **Always** have a newline before new function declarations!
+    ```javascript
+    // bad
+    function andThen(x) {
+      console.log(x);
+    }
+    for (var x = 0; x < list.length; x++) {
+      doSomethingTo(x);
+      doSomethingElseTo(x);
+      andThen(x);
+    }
+    for (var y = 0; y < otherList.length; y++) {
+      nowDoSomethingWith(y);
+    }
+
+    // good
+    /**
+    * Outputs x to the log.
+    * @param {Number} x The number to output to the console
+    * @return {Number} The incremented value of x
+    */
+    function andThen(x) {
+      console.log(x);
+      return ++x;
+    }
+    
+    // Do lots of wonderful things to x.
+    for (var x = 0; x < list.length; x++) {
+      doSomethingTo(x);
+      doSomethingElseTo(x);
+      andThen(x);
+    }
+
+    // Even better, I explain what this for loop does!
+    for (var y = 0; y < otherList.length; y++) {
+      nowDoSomethingWith(y);
+    }
+    ```
+
+    **[[Back to top]](#TOC)**
+
+## <a name='if-else-blocks'>`if else` blocks</a>
+
+  - Use the "stroustrup" style ([See ESLint Docs](http://eslint.org/docs/rules/brace-style.html)) of `if else` blocks. The reason is it makes the keywords `else` and `else if` stand out more. It also allows for added a comment before the statement explaining what that block does.
+    ```javascript
+    // bad
+    function foo()
+    {
+      return true;
+    }
+
+    if (foo)
+    {
+      bar();
+    }
+
+    try
+    {
+      somethingRisky();
+    } catch(e)
+    {
+      handleError();
+    }
+
+    if (foo) {
+      bar();
+    } else {
+      baz();
+    }
+    
+    // good
+    function foo() {
+      return true;
+    }
+
+    if (foo) {
+      bar();
+    }
+
+    // even better!
+    // Show the bar text on the screen.
+    if (foo) {
+      bar();
+    }
+    // Don't show any text to the user but cancel the timeout.
+    // Could be anything here but at least we know what this
+    // else block does.
+    else {
+      baz();
+    }
+
+    try {
+      somethingRisky();
+    }
+    catch(e) {
+      handleError();
+    }
+    ```
+
+    **[[Back to top]](#TOC)**
 
 ## <a name='types'>Types</a>
 
@@ -68,7 +180,7 @@
     console.log(foo[0], bar[0]); // => 9, 9
     ```
 
-    **[[⬆]](#TOC)**
+    **[[Back to top]](#TOC)**
 
 ## <a name='objects'>Objects</a>
 
@@ -99,7 +211,7 @@
       hidden: true
     };
     ```
-    **[[⬆]](#TOC)**
+    **[[Back to top]](#TOC)**
 
 ## <a name='arrays'>Arrays</a>
 
@@ -142,7 +254,7 @@
     itemsCopy = Array.prototype.slice.call(items);
     ```
 
-    **[[⬆]](#TOC)**
+    **[[Back to top]](#TOC)**
 
 
 ## <a name='strings'>Strings</a>
@@ -188,7 +300,7 @@
       'fast.';
     ```
 
-  - When programatically building up a string, use Array#join instead of string concatenation. Mostly for IE: [jsPerf](http://jsperf.com/string-vs-array-concat/2).
+  - **The prefered method is the "bad" method since it is more readable and clear as to what is happening.** This is an issue of readability vs performance. In areas where performance is critical, the "good" method should be used. Here is the performance reason which again, should only be used in a performance critical area of code: Use Array#join instead of string concatenation. Mostly for IE: [jsPerf](http://jsperf.com/string-vs-array-concat/2).
 
     ```javascript
     var items,
@@ -208,7 +320,7 @@
 
     length = messages.length;
 
-    // bad
+    // bad but preferred due to readability!
     function inbox(messages) {
       items = '<ul>';
 
@@ -231,23 +343,40 @@
     }
     ```
 
-    **[[⬆]](#TOC)**
+    **[[Back to top]](#TOC)**
 
 
 ## <a name='functions'>Functions</a>
 
-  - Function expressions:
-
+  - Local functions should be declared using the `function` keyword and not assigned to a `var`. This is more clear and the function can still be referenced by name later.
     ```javascript
-    // anonymous function expression
-    var anonymous = function() {
-      return true;
-    };
-
-    // named function expression
+    // bad - named function expression
     var named = function named() {
       return true;
     };
+
+    // good
+    function named() {
+      return true;
+    }
+    ```
+
+  - Anonymous and named functions. While javascript allows for anonymous functions. All functions should be named. This gives more info when profiling or viewing a call stack:
+
+    ```javascript
+    var list = ['a', 'b', 'c'];
+    
+    // bad
+    list.sort(function(a, b) {
+      return a - b;
+    });
+    
+    // good
+    list.sort(function myListSorter(a, b) {
+      return a - b;
+    });
+    
+   
 
     // immediately-invoked function expression (IIFE)
     (function() {
@@ -255,22 +384,33 @@
     })();
     ```
 
-  - Never declare a function in a non-function block (if, while, etc). Assign the function to a variable instead. Browsers will allow you to do it, but they all interpret it differently, which is bad news bears.
-  - **Note:** ECMA-262 defines a `block` as a list of statements. A function declaration is not a statement. [Read ECMA-262's note on this issue](http://www.ecma-international.org/publications/files/ECMA-ST/Ecma-262.pdf#page=97).
+  - Immediately invoked functions
+    ```javascript
+    // immediately-invoked function expression (IIFE)
+    (function welcomeToTheInternet() {
+      console.log('Welcome to the Internet. Please follow me.');
+    })();
+    ```
+
+  - **Never declare a function in a non-function block (if, while, etc).** Browsers will allow you to do it, but they all interpret it differently, which is bad news bears. **Note:** ECMA-262 defines a `block` as a list of statements. A function declaration is not a statement. [Read ECMA-262's note on this issue](http://www.ecma-international.org/publications/files/ECMA-ST/Ecma-262.pdf#page=97).
 
     ```javascript
     // bad
-    if (currentUser) {
+    for (var i = 0; i < list.length; i++) {
       function test() {
         console.log('Nope.');
       }
+      
+      test();
     }
 
     // good
-    if (currentUser) {
-      var test = function test() {
-        console.log('Yup.');
-      };
+    function test() {
+      console.log('Nope.');
+    }
+    
+    for (var i = 0; i < list.length; i++) {
+      test();
     }
     ```
 
@@ -288,7 +428,7 @@
     }
     ```
 
-    **[[⬆]](#TOC)**
+    **[[Back to top]](#TOC)**
 
 
 
@@ -324,7 +464,7 @@
     var isJedi = getProp('jedi');
     ```
 
-    **[[⬆]](#TOC)**
+    **[[Back to top]](#TOC)**
 
 
 ## <a name='variables'>Variables</a>
@@ -339,18 +479,18 @@
     var superPower = new SuperPower();
     ```
 
-  - Use one `var` declaration for multiple variables and declare each variable on a newline.
+  - Use a `var` declaration for multiple variables and declare each variable on a newline. The reason for this is because of the use of tabs for indenting ([See Tabs vs Spaces](#tabs)). With the tab size potentially set to anything, it is very hard to line up the variables below the initial `var` declaration.
 
     ```javascript
     // bad
-    var items = getItems();
-    var goSportsTeam = true;
-    var dragonball = 'z';
-
-    // good
     var items = getItems(),
         goSportsTeam = true,
         dragonball = 'z';
+    
+    // good
+    var items = getItems();
+    var goSportsTeam = true;
+    var dragonball = 'z';
     ```
 
   - Declare unassigned variables last. This is helpful when later on you might need to assign a variable depending on one of the previous assigned variables.
@@ -358,82 +498,43 @@
     ```javascript
     // bad
     var i, len, dragonball,
-        items = getItems(),
-        goSportsTeam = true;
+    var items = getItems(),
+    var goSportsTeam = true;
 
     // bad
     var i, items = getItems(),
-        dragonball,
-        goSportsTeam = true,
-        len;
+    var dragonball,
+    var goSportsTeam = true,
+    var len;
 
     // good
     var items = getItems(),
-        goSportsTeam = true,
-        dragonball,
-        length,
-        i;
+    var goSportsTeam = true,
+    var dragonball,
+    var length,
+    var i;
     ```
 
-  - Assign variables at the top of their scope. This helps avoid issues with variable declaration and assignment hoisting related issues.
+  - Do not use variables outside of their scope even thought JavaScript will allow it. If you need to use the variable outside of the scope, declare it outside the scope.
 
     ```javascript
     // bad
-    function() {
-      test();
-      console.log('doing stuff..');
-
-      //..other stuff..
-
-      var name = getName();
-
-      if (name === 'test') {
-        return false;
-      }
-
-      return name;
+    for (var i = 0; i < list.length; i++) {
+      // ..do something..
     }
+    
+    console.log(i);
 
     // good
-    function() {
-      var name = getName();
-
-      test();
-      console.log('doing stuff..');
-
-      //..other stuff..
-
-      if (name === 'test') {
-        return false;
-      }
-
-      return name;
+    var i;
+    for (i = 0; i < list.length; i++) {
+      // ..do something..
     }
-
-    // bad
-    function() {
-      var name = getName();
-
-      if (!arguments.length) {
-        return false;
-      }
-
-      return true;
-    }
-
-    // good
-    function() {
-      if (!arguments.length) {
-        return false;
-      }
-
-      var name = getName();
-
-      return true;
-    }
+    
+    console.log(i);
     ```
 
-    **[[⬆]](#TOC)**
+    **[[Back to top]](#TOC)**
 
 
 ## <a name='hoisting'>Hoisting</a>
@@ -523,7 +624,7 @@
 
   - For more information refer to [JavaScript Scoping & Hoisting](http://www.adequatelygood.com/2010/2/JavaScript-Scoping-and-Hoisting) by [Ben Cherry](http://www.adequatelygood.com/)
 
-    **[[⬆]](#TOC)**
+    **[[Back to top]](#TOC)**
 
 
 
@@ -572,7 +673,7 @@
 
   - For more information see [Truth Equality and JavaScript](http://javascriptweblog.wordpress.com/2011/02/07/truth-equality-and-javascript/#more-2108) by Angus Croll
 
-    **[[⬆]](#TOC)**
+    **[[Back to top]](#TOC)**
 
 
 ## <a name='blocks'>Blocks</a>
@@ -601,12 +702,33 @@
     }
     ```
 
-    **[[⬆]](#TOC)**
+    **[[Back to top]](#TOC)**
 
 
 ## <a name='comments'>Comments</a>
 
-  - Use `/** ... */` for multiline comments. Include a description, specify types and values for all parameters and return values.
+  - In general, comments are a great way to explain your code. I agree with writing self documenting code, but that is not enough on large projects and with multiple team members. Comments help explain the "what" and the "why" of your code.
+    - "What" is happening in the code that follows the comment. Think of the comment before a block of code as a topic sentence of a paragraph. It helps divide ideas and give a general overview of what is happening next.
+        ```javascript
+        // Make the face very angry.
+        openMouth();
+        turnFaceRed();
+        blowSmokeOutOfEars();
+        
+        // After being angry, make the face represent acceptance.
+        closeMouth();
+        smile();
+        turnFaceNormalColor();
+        ```
+
+    - "Why" is this code here. This can be for a complicated bug fix that required a one line change. But that one line is **very** important. Instead of just putting in the one line fix and expecting people to understand why that line is there, explain it!
+        ```javascript
+        // We need to reset here because it resets this object
+        // after some really crazy stuff happened in our app and
+        // if we don't reset it here some other crazy stuff will happen.
+        appState.reset();
+        ```
+  - Use `/** ... */` for `function` comments. Include a description, specify types and values for all parameters and return values.
 
     ```javascript
     // bad
@@ -638,7 +760,17 @@
     }
     ```
 
-  - Use `//` for single line comments. Place single line comments on a newline above the subject of the comment. Put an emptyline before the comment.
+  - The exception to the above rule is when declaring a function as a callback.
+
+    ```javascript
+    // good
+    // Sort the array in ascending order.
+    myArray.sort(function myArraySort(a, b) {
+      return b - a;
+    });
+    ```
+   
+  - Use `//` for non-function comments. Place single line comments on a newline above the subject of the comment. Put an emptyline before the comment and a space after the `//`.
 
     ```javascript
     // bad
@@ -668,41 +800,69 @@
     }
     ```
 
-    **[[⬆]](#TOC)**
+    **[[Back to top]](#TOC)**
 
 
 ## <a name='whitespace'>Whitespace</a>
 
-  - Use soft tabs set to 2 spaces
+  - Place a space after **all** keywords. This helps differentiate them from user function calls.
 
     ```javascript
     // bad
-    function() {
-    ∙∙∙∙var name;
+    if(isSet) {
+      doSomething();
     }
-
-    // bad
-    function() {
-    ∙var name;
-    }
-
+    
     // good
-    function() {
-    ∙∙var name;
+    if (isSet) {
+      doSomething();
     }
     ```
-  - Place 1 space before the leading brace.
+  
+  - Place a space after **all** operators.
+
+    ```javascript
+    // bad
+    var fullName = 'First: '+firstName+' Last: '+lastName;
+    
+    // good
+    var fullName = 'First: ' + firstName + ' Last: ' + lastName;
+    ```
+  
+  - Do not place a space after a function name and it's parentheses.
+
+    ```javascript
+    // bad
+    function foo (bar) {
+      doSomething();
+    }
+    
+    // good
+    function foo(bar) {
+      doSomething();
+    }
+    ```
+  
+  - Place 1 space before any leading brace.
 
     ```javascript
     // bad
     function test(){
       console.log('test');
     }
+    
+    if (isSet){
+      test();
+    }
 
     // good
     function test() {
       console.log('test');
     }
+    
+    if (isSet) {
+	  test()
+	}
 
     // bad
     dog.set('attr',{
@@ -764,22 +924,28 @@
         .call(tron.led);
     ```
 
-    **[[⬆]](#TOC)**
+    **[[Back to top]](#TOC)**
 
-## <a name='leading-commas'>Leading Commas</a>
+## <a name='leading-commas'>Leading Operators or Commas</a>
 
   - **Nope.**
 
     ```javascript
     // bad
-    var once
-      , upon
-      , aTime;
+    var isSet = (condition1 && condition2)
+      || (condition3 && condition4);
 
     // good
-    var once,
-        upon,
-        aTime;
+    var isSet = (condition1 && condition2) ||
+      (condition3 && condition4);
+
+    // bad
+    var longString = 'This is a very long string that I could not'
+      + 'Fit on to one line because I just have so much to say!';
+  
+    // good
+    var longString = 'This is a very long string that I could not' +
+      'Fit on to one line because I just have so much to say!';
 
     // bad
     var hero = {
@@ -798,7 +964,7 @@
     };
     ```
 
-    **[[⬆]](#TOC)**
+    **[[Back to top]](#TOC)**
 
 
 ## <a name='semicolons'>Semicolons</a>
@@ -825,7 +991,7 @@
     })();
     ```
 
-    **[[⬆]](#TOC)**
+    **[[Back to top]](#TOC)**
 
 
 ## <a name='type-coercion'>Type Casting & Coercion</a>
@@ -897,7 +1063,7 @@
     var hasAge = !!age;
     ```
 
-    **[[⬆]](#TOC)**
+    **[[Back to top]](#TOC)**
 
 
 ## <a name='naming-conventions'>Naming Conventions</a>
@@ -1011,7 +1177,7 @@
     };
     ```
 
-    **[[⬆]](#TOC)**
+    **[[Back to top]](#TOC)**
 
 
 ## <a name='accessors'>Accessors</a>
@@ -1065,7 +1231,7 @@
     };
     ```
 
-    **[[⬆]](#TOC)**
+    **[[Back to top]](#TOC)**
 
 
 ## <a name='constructors'>Constructors</a>
@@ -1150,7 +1316,7 @@
     };
     ```
 
-    **[[⬆]](#TOC)**
+    **[[Back to top]](#TOC)**
 
 
 ## <a name='modules'>Modules</a>
@@ -1181,7 +1347,7 @@
     }(this);
     ```
 
-    **[[⬆]](#TOC)**
+    **[[Back to top]](#TOC)**
 
 
 ## <a name='jquery'>jQuery</a>
@@ -1246,14 +1412,14 @@
     $($sidebar[0]).find('ul');
     ```
 
-    **[[⬆]](#TOC)**
+    **[[Back to top]](#TOC)**
 
 
 ## <a name='es5'>ECMAScript 5 Compatibility</a>
 
   - Refer to [Kangax](https://twitter.com/kangax/)'s ES5 [compatibility table](http://kangax.github.com/es5-compat-table/)
 
-  **[[⬆]](#TOC)**
+  **[[Back to top]](#TOC)**
 
 
 ## <a name='testing'>Testing</a>
@@ -1266,7 +1432,7 @@
     }
     ```
 
-    **[[⬆]](#TOC)**
+    **[[Back to top]](#TOC)**
 
 
 ## <a name='performance'>Performance</a>
@@ -1280,7 +1446,7 @@
   - [Long String Concatenation](http://jsperf.com/ya-string-concat)
   - Loading...
 
-  **[[⬆]](#TOC)**
+  **[[Back to top]](#TOC)**
 
 
 ## <a name='resources'>Resources</a>
@@ -1326,7 +1492,7 @@
   - [Dustin Diaz](http://dustindiaz.com/)
   - [nettuts](http://net.tutsplus.com/?s=javascript)
 
-  **[[⬆]](#TOC)**
+  **[[Back to top]](#TOC)**
 
 ## <a name='in-the-wild'>In the Wild</a>
 
@@ -1346,10 +1512,8 @@
 
   This style guide is also available in other languages:
 
-  - :de: **German**: [timofurrer/javascript-style-guide](https://github.com/timofurrer/javascript-style-guide)
-  - :jp: **Japanese**: [mitsuruog/javacript-style-guide](https://github.com/mitsuruog/javacript-style-guide)
 
-## <a name='guide-guide'>The JavaScript Style Guide Guide</a>
+## <a name='guide-guide'>The Original JavaScript Style Guide Guide</a>
 
   - [Reference](https://github.com/airbnb/javascript/wiki/The-JavaScript-Style-Guide-Guide)
 
@@ -1383,7 +1547,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-**[[⬆]](#TOC)**
+**[[Back to top]](#TOC)**
 
 # };
 
