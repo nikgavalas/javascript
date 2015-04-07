@@ -46,7 +46,7 @@
 
 ## <a name='code-layout'>General Code Layout</a>
 
-  - Use newlines to group logically related pieces of code. **Always** have a newline before new function declarations!
+  - Use newlines to group logically related pieces of code. **Always** have a newline before and after new function declarations!
     ```javascript
     // bad
     function andThen(x) {
