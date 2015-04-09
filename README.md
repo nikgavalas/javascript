@@ -361,23 +361,21 @@
     }
     ```
 
-  - Anonymous and named functions. While javascript allows for anonymous functions. All functions should be named. This gives more info when profiling or viewing a call stack:
+  - Anonymous and named functions. While javascript allows for anonymous functions, it is prefered that functions be named. This gives more info when profiling or viewing a call stack:
 
     ```javascript
     var list = ['a', 'b', 'c'];
     
-    // bad
+    // ok
     list.sort(function(a, b) {
       return a - b;
     });
     
-    // good
+    // better
     list.sort(function myListSorter(a, b) {
       return a - b;
     });
     
-   
-
     // immediately-invoked function expression (IIFE)
     (function() {
       console.log('Welcome to the Internet. Please follow me.');
